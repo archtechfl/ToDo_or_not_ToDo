@@ -3,11 +3,19 @@
 </head>
 
 <body>
-  <h1>Jeremy, welcome to Meteor!</h1>
-  {{> hello}}
+  <div class="container">
+	  <header>
+	  	<h1>To Do or not To Do: A To Do List</h1>
+	  </header>
+	  <ul>
+	  	{{#each tasks}}
+	  		{{> task}}
+	  	{{/each}}
+	  </ul>
+  </div>
 </body>
 
-<template name="hello">
-  <button>Click Me</button>
-  <p>You've pressed the button {{counter}} times.</p>
+<template name="task">
+	<li>{{text}}</li>
 </template>
+
