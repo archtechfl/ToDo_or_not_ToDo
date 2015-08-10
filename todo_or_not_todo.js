@@ -4,7 +4,21 @@ if (Meteor.isClient) {
 
   Template.body.helpers({
     tasks: function () {
-      return Tasks.find({}, {sort: {createdAt: -1}});
+      /* Uses hideCompleted Session variable to control appearance of list items */
+      if (Session.get("hideCompleted")) {
+        return Tasks.find({checked: {$ne: true}},{sort:{createdAt: -1}});
+      } else {
+        return Tasks.find({},{sort:{createdAt: -1}});
+      }
+    },
+    // This method is called in the template, and sets the value of "checked" in the hideCompleted
+    // checkbox
+    hideCompleted: function () {
+      return Session.get("hideCompleted");
+    },
+    // keep track of incompletes
+    incompleteCount: function () {
+      return Tasks.find({checked: {$ne: true}}).count();
     }
   });
 
@@ -24,6 +38,9 @@ if (Meteor.isClient) {
  
       // Clear form
       event.target.text.value = "";
+    },
+    "change .hide-completed input": function (event) {
+      Session.set("hideCompleted", event.target.checked);
     }
   });
 
