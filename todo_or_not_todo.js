@@ -26,6 +26,20 @@ if (Meteor.isClient) {
       event.target.text.value = "";
     }
   });
+
+  // Task template events
+  Template.task.events({
+    "click .toggle-checked": function () {
+      // Set checked property to the opposite of its current value
+        Tasks.update(this._id, {
+          $set: {checked: ! this.checked}
+        });
+    },
+    "click .delete": function () {
+      Tasks.remove(this._id);
+    }
+  });
+
 }
 
 if (Meteor.isServer) {
