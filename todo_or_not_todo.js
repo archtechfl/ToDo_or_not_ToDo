@@ -6,6 +6,7 @@ if (Meteor.isClient) {
     tasks: function () {
       /* Uses hideCompleted Session variable to control appearance of list items */
       if (Session.get("hideCompleted")) {
+        // $ne: MongoDB flag, not equals
         return Tasks.find({checked: {$ne: true}},{sort:{createdAt: -1}});
       } else {
         return Tasks.find({},{sort:{createdAt: -1}});
@@ -33,7 +34,9 @@ if (Meteor.isClient) {
       // Insert a task into the collection
       Tasks.insert({
         text: text,
-        createdAt: new Date() // current time
+        createdAt: new Date(), // current time
+        owner: Meteor.userId(),
+        username: Meteor.user().username
       });
  
       // Clear form
@@ -55,6 +58,10 @@ if (Meteor.isClient) {
     "click .delete": function () {
       Tasks.remove(this._id);
     }
+  });
+
+  Accounts.ui.config({
+    passwordSignupFields: "USERNAME_ONLY"
   });
 
 }
