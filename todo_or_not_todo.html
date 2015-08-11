@@ -7,13 +7,13 @@
 	  <header>
 	  	<h1>To Do or not To Do: A To Do List</h1>
 	  	<h3>Items to do: {{incompleteCount}}</h3>
-	  	<label class="hide-completed">
-	  		<input type="checkbox" checked="{{hideCompleted}}"/>
-	  		Hide Completed Tasks
-	  	</label>
-
-	  	{{> loginButtons}}
-
+	  	<div class="clearfix">
+	  		{{> loginButtons}}
+		  	<label class="hide-completed">
+		  		<input type="checkbox" checked="{{hideCompleted}}"/>
+		  		Hide Completed Tasks
+		  	</label>
+		</div>
 	  	{{#if currentUser}}
 	  	<form class="new-task">
 	        <input type="text" name="text" placeholder="Type to add new tasks" />
