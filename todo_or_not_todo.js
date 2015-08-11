@@ -44,6 +44,14 @@ if (Meteor.isClient) {
     }
   });
 
+  // Determine if owner
+  Template.task.helpers({
+    // Owner is defined when the task is created, set to the user ID that created it
+    isOwner: function () {
+      return this.owner === Meteor.userId();
+    }
+  });
+
   // Task template events
   Template.task.events({
     "click .toggle-checked": function () {
@@ -52,6 +60,9 @@ if (Meteor.isClient) {
     },
     "click .delete": function () {
       Meteor.call("deleteTask", this._id);
+    },
+    "click .toggle-private": function () {
+      Meteor.call("setPrivate", this._id, ! this.private);
     }
   });
 
@@ -65,7 +76,12 @@ if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
     Meteor.publish("tasks", function () {
-      return Tasks.find();
+      return Tasks.find({
+        $or: [
+          { private: {$ne: true} },
+          { owner: this.userId }
+        ]
+      });
     });
   });
 }
@@ -93,6 +109,15 @@ Meteor.methods({
   },
   setChecked: function (taskId, setChecked) {
     Tasks.update(taskId, { $set: { checked: setChecked} });
+  },
+  setPrivate: function (taskId, setToPrivate) {
+    var task = Tasks.findOne(taskId);
+    // Only owner can set to private
+    if (task.owner !== Meteor.userId()) {
+      throw new Meteor.Error("not-authorized");
+    }
+    // Update privacy on task
+    Tasks.update(taskId, { $set: { private: setToPrivate } });
   }
 });
 
