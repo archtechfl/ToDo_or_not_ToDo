@@ -2,6 +2,8 @@ Tasks =  new Mongo.Collection("tasks");
 
 if (Meteor.isClient) {
 
+  Meteor.subscribe("tasks");
+
   Template.body.helpers({
     tasks: function () {
       /* Uses hideCompleted Session variable to control appearance of list items */
@@ -62,6 +64,9 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
+    Meteor.publish("tasks", function () {
+      return Tasks.find();
+    });
   });
 }
 
@@ -80,6 +85,10 @@ Meteor.methods({
     });
   },
   deleteTask: function (taskId) {
+    // Make sure the user is logged in before inserting a task
+    if (! Meteor.userId()) {
+      throw new Meteor.Error("not-authorized");
+    }
     Tasks.remove(taskId);
   },
   setChecked: function (taskId, setChecked) {
